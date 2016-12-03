@@ -1,7 +1,38 @@
 var input = ["R3", "L2", "L2", "R4", "L1", "R2", "R3", "R4", "L2", "R4", "L2", "L5", "L1", "R5", "R2", "R2", "L1", "R4", "R1", "L5", "L3", "R4", "R3", "R1", "L1", "L5", "L4", "L2", "R5", "L3", "L4", "R3", "R1", "L3", "R1", "L3", "R3", "L4", "R2", "R5", "L190", "R2", "L3", "R47", "R4", "L3", "R78", "L1", "R3", "R190", "R4", "L3", "R4", "R2", "R5", "R3", "R4", "R3", "L1", "L4", "R3", "L4", "R1", "L4", "L5", "R3", "L3", "L4", "R1", "R2", "L4", "L3", "R3", "R3", "L2", "L5", "R1", "L4", "L1", "R5", "L5", "R1", "R5", "L4", "R2", "L2", "R1", "L5", "L4", "R4", "R4", "R3", "R2", "R3", "L1", "R4", "R5", "L2", "L5", "L4", "L1", "R4", "L4", "R4", "L4", "R1", "R5", "L1", "R1", "L5", "R5", "R1", "R1", "L3", "L1", "R4", "L1", "L4", "L4", "L3", "R1", "R4", "R1", "R1", "R2", "L5", "L2", "R4", "L1", "R3", "L5", "L2", "R5", "L4", "R5", "L5", "R3", "R4", "L3", "L3", "L2", "R2", "L5", "L5", "R3", "R4", "R3", "R4", "R3", "R1"]
 
 
+function getFirstRepeatPosition (path) {
+  var facing = "N"
+  var position = [0, 0]
+  var visited = []
+  var firstRepeat
+  path.some((next) => {
+    var coords = next.split(/(L|R)/)
+    var dir = coords[1]
+    var dist = +coords[2]
+    var newestPosition
+    facing = getNewDirection(facing, dir)
+    var newPositions = updatePosition(position, facing, dist)
+    position = newPositions[newPositions.length - 1]
+    var isRepeat = visited.some((oldPosition) => {
+      return newPositions.some((newPosition) => {
+        newestPosition = newPosition
 
+        return oldPosition[0] === newPosition[0] && oldPosition[1] === newPosition[1]
+      })
+
+    })
+    visited = visited.concat(newPositions)
+    if (isRepeat) {
+      firstRepeat = newestPosition
+    }
+
+    return isRepeat
+  })
+
+
+  return firstRepeat
+}
 
 
 function getEndPosition (path) {
@@ -28,25 +59,32 @@ function getNewDirection (facing, dir) {
   return directions[newDirIndex]
 }
 
-function updatePosition (position, facing, dist) {
-  switch (facing) {
-    case "N":
-      position[1] -= dist
-      break;
-    case "E":
-      position[0] += dist
-      break;
-    case "S":
-      position[1] += dist
-      break;
-    case "W":
-      position[0] -= dist
-      break;
+function updatePosition (positionYeah, facing, dist) {
+  var position = positionYeah.slice(0)
+  var positions = []
+  for (var i = 0; i < dist; i++) {
+    switch (facing) {
+      case "N":
+        position[1] -= 1
+        break;
+      case "E":
+        position[0] += 1
+        break;
+      case "S":
+        position[1] += 1
+        break;
+      case "W":
+        position[0] -= 1
+        break;
+    }
+    positions.push(position.slice(0))
   }
-  return position
+
+  return positions
 }
 
-var endPosition = getEndPosition(input)
+var endPosition = getFirstRepeatPosition(input)
+console.log(endPosition)
 console.log(Math.abs(endPosition[0]) + Math.abs(endPosition[1]))
 // console.log(getNewDirection("N", "R"), "E")
 // console.log(getNewDirection("N", "L"), "W")
