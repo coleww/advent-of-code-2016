@@ -9,6 +9,7 @@ function formatKey (key) {
     letters: letters.reduce((acc, str) => {
       return acc + str
     }, ""),
+    words: letters,
     sectorId: +sectorId,
     checksum: checksum
   }
@@ -45,21 +46,47 @@ var solution = input.reduce((acc, keyData) => {
   }
 }, 0)
 
-console.log(solution)
+// console.log(solution)
 
 
 
+// a 97
+// z 122
+function decryptWord (word, num) {
+  // num % 26
+  return word.split('').map((letter) => {
+    var oldCode = letter.charCodeAt(0)
+    var toAdvance = num % 26
+    var newCode = oldCode + toAdvance
+    if (newCode > 122) newCode -= 26
+    return String.fromCharCode(newCode)
+  }).join('')
+}
+
+// console.log(decryptWord('a', 27), 'b')
+
+// console.log(decryptWord('z', 27), 'a')
 
 
 
+var validCodes = input.filter((keyData) => {
+  var key = formatKey(keyData)
+  return orderLetters(key.letters) === key.checksum
+})
 
+// console.log(validCodes.length)
+var wordCounter = {}
+validCodes.forEach(function (keyData) {
+  var key = formatKey(keyData)
+  var theMessage = key.words.map((word) => {
+    var aWord =  decryptWord(word, key.sectorId)
+    if (aWord === 'northpole') {console.log(key.sectorId)}
+    wordCounter[aWord] = wordCounter[aWord] ? wordCounter[aWord]++ : 1
+    return aWord
+  }).join(' ')
+  // console.log(theMessage, key.sectorId)
+})
 
-
-
-
-
-
-
-
-console.log(formatKey('aaaaa-bbb-z-y-x-123[abxyz]'))
-console.log(orderLetters('aaaaabbbzyx'))
+console.log(wordCounter)
+// console.log(formatKey('aaaaa-bbb-z-y-x-123[abxyz]'))
+// console.log(orderLetters('aaaaabbbzyx'))
