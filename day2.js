@@ -14,15 +14,18 @@ var input = [
 // ]
 
 var keyPad = [
-  [1, 2, 3],
-  [4, 5, 6],
-  [7, 8, 9]
+  [null, null, 1, null, null],
+  [null, 2, 3, 4, null],
+  [5, 6, 7, 8, 9],
+  [null, 'A', 'B', 'C', null],
+  [null, null, 'D', null, null]
 ]
 
-var position = [1, 1]
+var position = [2, 0]
 
 function processLine (startPos, line) {
-  return line.split("").reduce((pos, dir) => {
+  return line.split("").reduce((posi, dir) => {
+    var pos = posi.slice(0)
     switch (dir) {
       case "U":
         pos[0] -= 1
@@ -39,11 +42,14 @@ function processLine (startPos, line) {
     }
     if (pos[0] < 0) pos[0] = 0
 
-    if (pos[0] > 2) pos[0] = 2
+    if (pos[0] > 4) pos[0] = 4
 
     if (pos[1] < 0) pos[1] = 0
 
-    if (pos[1] > 2) pos[1] = 2
+    if (pos[1] > 4) pos[1] = 4
+
+    if (getNum(pos) === null) pos = posi
+
     return pos
   }, startPos)
 }
